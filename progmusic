@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# -- useful bash modes ---------------------------------------------------------
-# set -o xtrace
-# set -o errexit
 set -o nounset
 
 # -- global variables ----------------------------------------------------------
@@ -12,37 +9,34 @@ index_page=""
 
 # -- functions -----------------------------------------------------------------
 fetch_index_page() {
-    index_page=$(cat index.html)
-    # if ! index_page=$(wget -q -O - "http://$host/" 2> /dev/null)
-    # then
-    #     echo "ERROR: failed to fetch index page" && return 1
-    # fi
+    # index_page=$(cat index.html)
+    if ! index_page=$(wget -q -O - "http://$host/" 2> /dev/null)
+    then
+        echo "ERROR: failed to fetch index page" && return 1
+    fi
 }
 
-# get_episode_links() {
-#     pattern='<a href="/\?c=.+">[0-9]+: Compiled by (.+)</a>'
-#     [[ $index_page =~ $pattern ]] && echo ${BASH_REMATCH[1]}
-# }
-
 get_djs() {
-    if ! grep -Po '<a href="/\?c=\w+">[0-9]+: Compiled by (\w+ ?)+</a>' index.html | grep -Po '(?<=by )(\w+ ?)+(?=</a>)'
+    if ! grep -Po '[0-9]+: Compiled by (\w+ ?)+' <<< "$index_page" | uniq | grep -Po '(?<=by )(\w+ ?)+'
     then
         echo "ERROR: failed to get dj's" && return 1
     fi
 }
 
-# show_menu() {
-# 
-# }
-
 play() {
     number="$1"
-    name="$2"
+    name=$(tr ' ' '_' <<< "$2")
+    name=$(tr '[A-Z]' '[a-z]' <<< "$name")
+
+    if ! [ "$number" -eq "4" ]
+    then
+        host="datassette.net"
+    fi
 
     ep_file_name_prefix="music_for_programming_$number-"
     ep_file_name_suffix=".mp3"
 
-    mpg123 "$host$content_path$ep_file_name_prefix$number$name"
+    mpg123 -q "http://$host$content_path$ep_file_name_prefix$name$ep_file_name_suffix"
 }
 
 usage() {
@@ -58,22 +52,19 @@ hash mpg123 2>&- || { echo >&2 "ERROR: mpg123 not installed, exiting.."; exit 1;
 
 # 1. ackowledgemet
 echo -e "==[  CLI for http://musicforprogramming.net/  ]==
---  Credits Datassette http://datassette.net/  --\n"
+    Credits Datassette http://datassette.net/    \n"
 
 # 1. fetch index page
-echo "--> fetching index page"
 fetch_index_page
 
 # 2. get djs
-echo "--> getting episodes"
-
 IFS=$'\n'
 djs=$(get_djs)
-echo "$djs"
-echo "==== EPISODES ========================"
+echo "==[ EPISODES ]========================"
 select dj in $djs
 do
     echo "--> playing $REPLY $dj"
+    play "$REPLY" "$dj"
     break
     # case "$dj" in
     #     "$djs")
