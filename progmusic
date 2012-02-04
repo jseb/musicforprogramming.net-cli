@@ -9,14 +9,13 @@ index_page=""
 
 # -- functions -----------------------------------------------------------------
 fetch_index_page() {
-    # index_page=$(cat index.html)
     if ! index_page=$(wget -q -O - "http://$host/" 2> /dev/null)
     then
         echo "ERROR: failed to fetch index page" && return 1
     fi
 }
 
-get_djs() {
+get_episodes() {
     if ! grep -Po '[0-9]+: Compiled by (\w+ ?)+' <<< "$index_page" | uniq | grep -Po '(?<=by )(\w+ ?)+'
     then
         echo "ERROR: failed to get dj's" && return 1
@@ -25,8 +24,7 @@ get_djs() {
 
 play() {
     number="$1"
-    name=$(tr ' ' '_' <<< "$2")
-    name=$(tr '[A-Z]' '[a-z]' <<< "$name")
+    name=$(tr ' ' '_' <<< "$2"|tr '[A-Z]' '[a-z]')
 
     if ! [ "$number" -eq "4" ]
     then
@@ -54,12 +52,12 @@ hash mpg123 2>&- || { echo >&2 "ERROR: mpg123 not installed, exiting.."; exit 1;
 echo -e "==[  CLI for http://musicforprogramming.net/  ]==
     Credits Datassette http://datassette.net/    \n"
 
-# 1. fetch index page
+# 2. fetch index page
 fetch_index_page
 
-# 2. get djs
+# 3. get djs
 IFS=$'\n'
-djs=$(get_djs)
+djs=$(get_episodes)
 echo "==[ EPISODES ]========================"
 select dj in $djs
 do
