@@ -4,7 +4,7 @@ set -o nounset
 
 # -- global variables ----------------------------------------------------------
 host="musicforprogramming.net"
-content_path="/content/"
+content_host="datashat.net"
 index_page=""
 
 # -- functions -----------------------------------------------------------------
@@ -26,13 +26,10 @@ play() {
     number="$1"
     name=$(tr ' ' '_' <<< "$2"|tr '[A-Z]' '[a-z]')
 
-    # one of the episodes are on a different host..
-    [[ "$number" = "4" ]] && host="datassette.net"
-
     ep_file_name_prefix="music_for_programming_$number-"
     ep_file_name_suffix=".mp3"
 
-    mpg123 -q "http://$host$content_path$ep_file_name_prefix$name$ep_file_name_suffix"
+    mpg123 -q "http://$content_host/$ep_file_name_prefix$name$ep_file_name_suffix"
 }
 
 usage() {
