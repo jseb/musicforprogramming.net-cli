@@ -21,7 +21,8 @@ get_djs() {
 }
 
 play() {
-    echo "--> playing episode $1 by $2"
+    green="\033[1;32m"
+    echo -e "$green-->$normal playing episode $1 by $2"
     dj=$(tr ' ' '_' <<< "$2" | tr '[A-Z]' '[a-z]')
     filename="music_for_programming_$1-$dj.mp3"
     mpg123 -q "http://$content_host/$filename" > /dev/null 2>&1 &
@@ -34,7 +35,8 @@ usage() {
 
 show_menu() {
     IFS=$'\n'
-    echo "==[ EPISODES ]========================"
+    # echo -e "$bold===[$normal  EPISODES  $bold]========================$normal"
+    echo "Choose episode:"
     select dj in $djs
     do
         if [[ -n "$dj" ]]
@@ -66,8 +68,11 @@ do
 done
 
 # -- main ----------------------------------------------------------------------
-echo -e "===[  CLI for http://musicforprogramming.net/  ]===
-     Credits Datassette http://datassette.net/    \n"
+bold="\033[1m"
+normal="\033[0m"
+
+echo -e "$bold===[$normal  CLI for http://musicforprogramming.net/ $bold]===
+     $normal Credits Datassette http://datassette.net/\n"
 
 fetch_index_page
 djs=$(get_djs)
