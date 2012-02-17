@@ -35,7 +35,6 @@ usage() {
 
 show_menu() {
     IFS=$'\n'
-    # echo -e "$bold===[$normal  EPISODES  $bold]========================$normal"
     echo "Choose episode:"
     select dj in $djs
     do
@@ -72,7 +71,7 @@ bold="\033[1m"
 normal="\033[0m"
 
 echo -e "$bold===[$normal  CLI for http://musicforprogramming.net/ $bold]===
-     $normal Credits Datassette http://datassette.net/\n"
+    $normal Credits Datassette http://datassette.net/\n"
 
 fetch_index_page
 djs=$(get_djs)
