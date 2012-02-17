@@ -9,43 +9,35 @@ index_page=""
 
 # -- functions -----------------------------------------------------------------
 fetch_index_page() {
-    if ! index_page=$(wget -q -O - "http://$host/" 2> /dev/null)
-    then
-        echo "ERROR: failed to fetch index page" && return 1
-    fi
+    index_page=$(wget -q -O - "http://$host/" 2> /dev/null) \
+        || ( echo >&2 "ERROR: failed to fetch index page" && return 1 )
 }
 
 get_episodes() {
-    if ! grep -Po '[0-9]+: Compiled by (\w+ ?)+' <<< "$index_page" | uniq | grep -Po '(?<=by )(\w+ ?)+'
-    then
-        echo "ERROR: failed to get dj's" && return 1
-    fi
+    grep -Po '[0-9]+: Compiled by (\w+ ?)+' <<< "$index_page" \
+            | uniq | grep -Po '(?<=by )(\w+ ?)+' \
+        || ( echo >&2 "ERROR: failed to get dj's" && return 1 )
 }
 
 play() {
-    number="$1"
-    name=$(tr ' ' '_' <<< "$2"|tr '[A-Z]' '[a-z]')
-
-    ep_file_name_prefix="music_for_programming_$number-"
-    ep_file_name_suffix=".mp3"
-
-    mpg123 -q "http://$content_host/$ep_file_name_prefix$name$ep_file_name_suffix"
+    name=$(tr ' ' '_' <<< "$2" | tr '[A-Z]' '[a-z]')
+    filename="music_for_programming_$1-$name.mp3"
+    mpg123 -q "http://$content_host/$filename" > /dev/null 2>&1 &
 }
 
 usage() {
     echo "usage: progmusic [-r]
-        -r random episode"
+        -m show episode menu"
 }
 
 # -- initialize ----------------------------------------------------------------
-# check if mpg123 is installed, otherwise exit
-hash mpg123 2>&- || { echo >&2 "ERROR: mpg123 not installed, exiting.."; exit 1; }
+hash mpg123 2>&- || ( echo >&2 "ERROR: mpg123 not installed, exiting.." && exit 1 )
 
 # -- main ----------------------------------------------------------------------
 
 # 1. ackowledgemet
-echo -e "==[  CLI for http://musicforprogramming.net/  ]==
-    Credits Datassette http://datassette.net/    \n"
+echo -e "===[  CLI for http://musicforprogramming.net/  ]===
+     Credits Datassette http://datassette.net/    \n"
 
 # 2. fetch index page
 fetch_index_page
