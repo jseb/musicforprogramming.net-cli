@@ -43,12 +43,14 @@ echo -e "===[  CLI for http://musicforprogramming.net/  ]===
 fetch_index_page
 
 # 3. get djs
+djs=$(get_djs)
+
+# 4. show menu, play selection
 IFS=$'\n'
-djs=$(get_episodes)
 echo "==[ EPISODES ]========================"
 select dj in $djs
 do
-    echo "--> playing $REPLY $dj"
+    echo "--> playing episode $REPLY by $dj"
     play "$REPLY" "$dj"
     break
     # case "$dj" in
