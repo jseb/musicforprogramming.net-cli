@@ -6,6 +6,7 @@ set -o nounset
 host="musicforprogramming.net"
 content_host="datashat.net"
 index_page=""
+menu=false
 
 # -- functions -----------------------------------------------------------------
 fetch_index_page() {
@@ -20,44 +21,54 @@ get_djs() {
 }
 
 play() {
+    echo "--> playing episode $1 by $2"
     dj=$(tr ' ' '_' <<< "$2" | tr '[A-Z]' '[a-z]')
     filename="music_for_programming_$1-$dj.mp3"
     mpg123 -q "http://$content_host/$filename" > /dev/null 2>&1 &
 }
 
 usage() {
-    echo "usage: progmusic [-r]
+    echo "usage: progmusic [-m]
         -m show episode menu"
+}
+
+show_menu() {
+    IFS=$'\n'
+    echo "==[ EPISODES ]========================"
+    select dj in $djs
+    do
+        if [[ -n "$dj" ]]
+        then
+            play "$REPLY" "$dj"
+            break
+        else
+            echo "invalid option"
+        fi
+    done
+}
+
+random_episode() {
+    no_of_episodes=$(wc -l <<< "$djs")
+    episode_no=$(( $RANDOM % $no_of_episodes + 1 ))
+    dj=$(sed -n ${episode_no}p <<< "$djs")
+    play "$episode_no" "$dj"
 }
 
 # -- initialize ----------------------------------------------------------------
 hash mpg123 2>&- || ( echo >&2 "ERROR: mpg123 not installed, exiting.." && exit 1 )
 
-# -- main ----------------------------------------------------------------------
+while getopts "m" opt
+do
+    case $opt in
+        m) menu=true ;;
+        *) usage && exit 1 ;;
+    esac
+done
 
-# 1. ackowledgemet
+# -- main ----------------------------------------------------------------------
 echo -e "===[  CLI for http://musicforprogramming.net/  ]===
      Credits Datassette http://datassette.net/    \n"
 
-# 2. fetch index page
 fetch_index_page
-
-# 3. get djs
 djs=$(get_djs)
-
-# 4. show menu, play selection
-IFS=$'\n'
-echo "==[ EPISODES ]========================"
-select dj in $djs
-do
-    echo "--> playing episode $REPLY by $dj"
-    play "$REPLY" "$dj"
-    break
-    # case "$dj" in
-    #     "$djs")
-    #         echo "--> playing $REPLY $dj"
-    #         ;;
-    #     *)
-    #         echo "invalid option"
-    # esac
-done
+$menu && show_menu || random_episode
