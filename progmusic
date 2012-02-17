@@ -13,15 +13,15 @@ fetch_index_page() {
         || ( echo >&2 "ERROR: failed to fetch index page" && return 1 )
 }
 
-get_episodes() {
+get_djs() {
     grep -Po '[0-9]+: Compiled by (\w+ ?)+' <<< "$index_page" \
             | uniq | grep -Po '(?<=by )(\w+ ?)+' \
-        || ( echo >&2 "ERROR: failed to get dj's" && return 1 )
+        || ( echo >&2 "ERROR: failed to get djs" && return 1 )
 }
 
 play() {
-    name=$(tr ' ' '_' <<< "$2" | tr '[A-Z]' '[a-z]')
-    filename="music_for_programming_$1-$name.mp3"
+    dj=$(tr ' ' '_' <<< "$2" | tr '[A-Z]' '[a-z]')
+    filename="music_for_programming_$1-$dj.mp3"
     mpg123 -q "http://$content_host/$filename" > /dev/null 2>&1 &
 }
 
