@@ -4,7 +4,7 @@ Convenient when you want music for programming without launching a browser (or h
 
 Needs: bash, wget, mpg123
 
-Plays using mpg123, which it backgrounds, so in order to stop it you need to kill the mpg123 process.
+Backgrounds mpg123, so to stop it you need to kill the mpg123 process.
 
 Usage:
 ./progmusic     - plays a random episode
