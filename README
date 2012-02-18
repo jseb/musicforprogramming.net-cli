@@ -1,0 +1,9 @@
+Command line interface for http://musicforprogramming.net/
+
+Convenient when you want music for programming without launching a browser (or have no browser available).
+
+Uses mpg123, which it backgrounds, so in order to stop it you need to kill the mpg123 process.
+
+Usage:
+./progmusic     - plays a random episode
+./progmusic -m  - let's you choose from a menu of available episodes
