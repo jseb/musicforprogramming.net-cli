@@ -15,15 +15,15 @@ fetch_index_page() {
 }
 
 get_djs() {
-    grep -Po '[0-9]+: Compiled by (\w+ ?)+' <<< "$index_page" \
-            | uniq | grep -Po '(?<=by )(\w+ ?)+' \
+    grep -Po '((\/\?c=\w+)|selected)\">[0-9]+: ([A-Za-z\+]+ ?)+' <<< "$index_page" \
+            | uniq | grep -Po '(?<=: )([A-Za-z\+] ?)+' \
         || ( echo >&2 "ERROR: failed to get djs" && return 1 )
 }
 
 play() {
     green="\033[1;32m"
     echo -e "$green-->$normal playing episode $1 by $2"
-    dj=$(tr ' ' '_' <<< "$2" | tr '[A-Z]' '[a-z]')
+    dj=$(tr ' ' '_' <<< "$2" | tr '[A-Z]' '[a-z]' | sed 's/+/and/g')
     filename="music_for_programming_$1-$dj.mp3"
     mpg123 -q "http://$content_host/$filename" > /dev/null 2>&1 &
 }
