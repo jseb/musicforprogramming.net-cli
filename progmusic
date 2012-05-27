@@ -68,8 +68,9 @@ normal="\033[0m"
 echo -e "$bold===[$normal  CLI for http://musicforprogramming.net/ $bold]===
     $normal Credits Datassette http://datassette.net/\n"
 
-djs=$(get_djs)
-if [[ "$djs" ]]
+if djs=$(get_djs)
 then
     $menu && show_menu "$djs" || random_episode "$djs"
+else
+    echo "ERROR: failed to get episodes"
 fi
