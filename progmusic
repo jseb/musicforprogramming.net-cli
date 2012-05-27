@@ -37,7 +37,7 @@ usage() {
 show_menu() {
     IFS=$'\n'
     echo "Choose episode:"
-    select dj in $djs
+    select dj in $1
     do
         if [[ -n "$dj" ]]
         then
@@ -50,9 +50,9 @@ show_menu() {
 }
 
 random_episode() {
-    no_of_episodes=$(wc -l <<< "$djs")
+    no_of_episodes=$(wc -l <<< "$1")
     episode_no=$(( $RANDOM % $no_of_episodes + 1 ))
-    dj=$(sed -n ${episode_no}p <<< "$djs")
+    dj=$(sed -n ${episode_no}p <<< "$1")
     play "$episode_no" "$dj"
 }
 
@@ -78,5 +78,5 @@ echo -e "$bold===[$normal  CLI for http://musicforprogramming.net/ $bold]===
 djs=$(fetch_index_page | get_djs)
 if [[ "$djs" ]]
 then
-    $menu && show_menu || random_episode
+    $menu && show_menu "$djs" || random_episode "$djs"
 fi
