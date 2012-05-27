@@ -10,7 +10,7 @@ menu=false
 
 # -- functions -----------------------------------------------------------------
 fetch_index_page() {
-    index_page=$(wget -q -O - "http://$host/" 2> /dev/null) \
+    wget -q -O - "http://$host/" 2> /dev/null \
         || ( echo >&2 "ERROR: failed to fetch index page" && return 1 )
 }
 
@@ -73,6 +73,6 @@ normal="\033[0m"
 echo -e "$bold===[$normal  CLI for http://musicforprogramming.net/ $bold]===
     $normal Credits Datassette http://datassette.net/\n"
 
-fetch_index_page || exit 1
+index_page=$(fetch_index_page) || exit 1
 djs=$(get_djs) || exit 1
 $menu && show_menu || random_episode
