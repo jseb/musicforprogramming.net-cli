@@ -75,4 +75,7 @@ echo -e "$bold===[$normal  CLI for http://musicforprogramming.net/ $bold]===
     $normal Credits Datassette http://datassette.net/\n"
 
 djs=$(fetch_index_page | get_djs)
-$menu && show_menu || random_episode
+if [[ "$djs" ]]
+then
+    $menu && show_menu || random_episode
+fi
