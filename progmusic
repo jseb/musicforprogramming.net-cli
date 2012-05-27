@@ -13,7 +13,7 @@ fetch_index_page() {
         || ( echo >&2 "ERROR: failed to fetch index page" && return 1 )
 }
 
-get_djs() {
+grep_djs() {
     while read line
     do
         grep -Po '((\/\?c=\w+)|selected)\">[0-9]+: ([A-Za-z\+]+ ?)+' <<< "$line" \
@@ -75,7 +75,7 @@ normal="\033[0m"
 echo -e "$bold===[$normal  CLI for http://musicforprogramming.net/ $bold]===
     $normal Credits Datassette http://datassette.net/\n"
 
-djs=$(fetch_index_page | get_djs)
+djs=$(fetch_index_page | grep_djs)
 if [[ "$djs" ]]
 then
     $menu && show_menu "$djs" || random_episode "$djs"
