@@ -5,7 +5,6 @@ set -o nounset
 # -- global variables ----------------------------------------------------------
 host="musicforprogramming.net"
 content_host="datashat.net"
-index_page=""
 menu=false
 
 # -- functions -----------------------------------------------------------------
@@ -15,9 +14,11 @@ fetch_index_page() {
 }
 
 get_djs() {
-    grep -Po '((\/\?c=\w+)|selected)\">[0-9]+: ([A-Za-z\+]+ ?)+' <<< "$index_page" \
-            | uniq | grep -Po '(?<=: )([A-Za-z\+] ?)+' \
-        || ( echo >&2 "ERROR: failed to get djs" && return 1 )
+    while read line
+    do
+        grep -Po '((\/\?c=\w+)|selected)\">[0-9]+: ([A-Za-z\+]+ ?)+' <<< "$line" \
+            | grep -Po '(?<=: )([A-Za-z\+] ?)+'
+    done
 }
 
 play() {
@@ -73,6 +74,5 @@ normal="\033[0m"
 echo -e "$bold===[$normal  CLI for http://musicforprogramming.net/ $bold]===
     $normal Credits Datassette http://datassette.net/\n"
 
-index_page=$(fetch_index_page) || exit 1
-djs=$(get_djs) || exit 1
+djs=$(fetch_index_page | get_djs)
 $menu && show_menu || random_episode
