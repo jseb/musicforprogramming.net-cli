@@ -10,8 +10,9 @@ menu=false
 # -- functions -----------------------------------------------------------------
 get_djs() {
     wget -q -O - "http://$host/" 2> /dev/null | \
-        grep -Po '((\/\?c=\w+)|selected)\">[0-9]+: ([A-Za-z\+]+ ?)+' \
-            | grep -Po '(?<=: )([A-Za-z\+] ?)+'
+        grep -oE "(/?c=[a-z]+\">[0-9]+: [a-zA-Z ]+)|(\"selected\">[0-9]+: [a-zA-Z ]+)" | \
+        grep -oE "[0-9]+: [a-zA-Z ]+" | \
+        awk -F': ' '{print $2}'
 }
 
 play() {
