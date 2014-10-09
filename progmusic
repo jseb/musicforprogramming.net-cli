@@ -50,9 +50,12 @@ random_episode() {
     play "$episode_no" "$dj"
 }
 
+assert_in_path() {
+    hash $1 2>&- || { echo >&2 "ERROR: $1 not installed, exiting.." && exit 1; }
+}
+
 # -- initialize ----------------------------------------------------------------
-hash mpg123 2>&- || { echo >&2 "ERROR: mpg123 not installed, exiting.." && exit 1; }
-hash wget 2>&- || { echo >&2 "ERROR: wget not installed, exiting.." && exit 1; }
+assert_in_path mpg123 && assert_in_path wget
 
 while getopts "m" opt
 do
