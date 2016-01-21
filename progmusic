@@ -10,8 +10,8 @@ menu=false
 # -- functions -----------------------------------------------------------------
 get_djs() {
     wget -q -O - "http://$host/" 2> /dev/null | \
-        grep -oE "(/?c=[a-z]+\">[0-9]+: [a-zA-Z ]+)|(\"selected\">[0-9]+: [a-zA-Z ]+)" | \
-        grep -oE "[0-9]+: [a-zA-Z ]+" | \
+    grep -oE "(\?[_a-z]+\">[0-9]+: [_a-zA-Z ]+)|(\"selected\">[0-9]+: [_a-zA-Z ]+)" | \
+        grep -oE "[0-9]+: [_a-zA-Z ]+" | \
         awk -F': ' '{print $2}'
 }
 
@@ -35,7 +35,7 @@ show_menu() {
     do
         if [[ -n "$dj" ]]
         then
-            play "$REPLY" "$dj"
+            play "$(($REPLY - 1))" "$dj"
             break
         else
             echo "invalid option"
