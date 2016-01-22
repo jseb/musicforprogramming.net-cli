@@ -20,8 +20,7 @@ play() {
     echo -e "$green-->$normal playing episode $1 by $2"
     dj=$(tr ' ' '_' <<< "$2" | tr '[A-Z]' '[a-z]' | sed 's/+/and/g')
     filename="music_for_programming_$1-$dj.mp3"
-    mpg123 "http://$content_host/$filename"
-    #mpg123 -q "http://$content_host/$filename" > /dev/null 2>&1 &
+    mpg123 -q "http://$content_host/$filename" > /dev/null 2>&1 &
 }
 
 usage() {
