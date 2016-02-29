@@ -10,8 +10,8 @@ menu=false
 # -- functions -----------------------------------------------------------------
 get_djs() {
     wget -q -O - "http://$host/" 2> /dev/null | \
-        grep -oE "(/?c=[a-z]+\">[0-9]+: [a-zA-Z_+ ]+)|(\"selected\">[0-9]+: [a-zA-Z_+ ]+)" | \
-        grep -oE "[0-9]+: [a-zA-Z_+ ]+" | \
+    grep -oE "(\?[a-z]+\">[0-9]+: [0-9a-zA-Z_+ ]+)|(\"selected\">[0-9]+: [0-9a-zA-Z_+ ]+)" | \
+        grep -oE "[0-9]+: [0-9a-zA-Z_+ ]+" | \
         awk -F': ' '{print $2}'
 }
 
@@ -35,7 +35,7 @@ show_menu() {
     do
         if [[ -n "$dj" ]]
         then
-            play "$REPLY" "$dj"
+            play "$(($REPLY - 1))" "$dj"
             break
         else
             echo "invalid option"
@@ -45,8 +45,9 @@ show_menu() {
 
 random_episode() {
     no_of_episodes=$(wc -l <<< "$1")
-    episode_no=$(( $RANDOM % $no_of_episodes + 1 ))
-    dj=$(sed -n ${episode_no}p <<< "$1")
+    episode_no=$(( $RANDOM % $no_of_episodes))
+    episode_line=$(( $episode_no + 1 ))
+    dj=$(sed -n ${episode_line}p <<< "$1")
     play "$episode_no" "$dj"
 }
 
