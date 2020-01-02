@@ -35,7 +35,7 @@ show_menu() {
     do
         if [[ -n "$dj" ]]
         then
-            play "$(($REPLY - 1))" "$dj"
+            play "$REPLY" "$dj"
             break
         else
             echo "invalid option"
@@ -48,7 +48,7 @@ random_episode() {
     episode_no=$(( $RANDOM % $no_of_episodes))
     episode_line=$(( $episode_no + 1 ))
     dj=$(sed -n ${episode_line}p <<< "$1")
-    play "$episode_no" "$dj"
+    play "$episode_line" "$dj"
 }
 
 assert_in_path() {
